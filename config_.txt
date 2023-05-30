@@ -1,0 +1,408 @@
+def selection_sort(arr):
+    n = len(arr)
+
+    for i in range(n):
+        min_index = i
+        for j in range(i+1, n):
+            if arr[j] < arr[min_index]:
+                min_index = j
+
+        arr[i], arr[min_index] = arr[min_index], arr[i]
+
+    return arr
+
+# User Input
+nums = list(map(int, input("Enter the numbers to sort (space-separated): ").split()))
+
+print("Sorted Array:")
+sorted_nums = selection_sort(nums)
+print(sorted_nums)
+
+
+#Minimum Spanning Tree:
+
+class Graph:
+    def __init__(self, vertices):
+        self.V = vertices
+        self.graph = []
+
+    def add_edge(self, u, v, w):
+        self.graph.append([u, v, w])
+
+    def find(self, parent, i):
+        if parent[i] == i:
+            return i
+        return self.find(parent, parent[i])
+
+    def union(self, parent, rank, x, y):
+        xroot = self.find(parent, x)
+        yroot = self.find(parent, y)
+
+        if rank[xroot] < rank[yroot]:
+            parent[xroot] = yroot
+        elif rank[xroot] > rank[yroot]:
+            parent[yroot] = xroot
+        else:
+            parent[yroot] = xroot
+            rank[xroot] += 1
+
+    def kruskal_mst(self):
+        result = []
+        i = 0
+        e = 0
+        self.graph = sorted(self.graph, key=lambda item: item[2])
+        parent = []
+        rank = []
+
+        for node in range(self.V):
+            parent.append(node)
+            rank.append(0)
+
+        while e < self.V - 1:
+            u, v, w = self.graph[i]
+            i += 1
+            x = self.find(parent, u)
+            y = self.find(parent, v)
+
+            if x != y:
+                e += 1
+                result.append([u, v, w])
+                self.union(parent, rank, x, y)
+
+        print("Minimum Spanning Tree:")
+        for u, v, w in result:
+            print(f"{u} - {v}: {w}")
+num_vertices = int(input("Enter the number of vertices: "))
+graph = Graph(num_vertices)
+
+num_edges = int(input("Enter the number of edges: "))
+print("Enter the edges (u v w) and their weights:")
+for _ in range(num_edges):
+    u, v, w = map(int, input().split())
+    graph.add_edge(u, v, w)
+
+graph.kruskal_mst()
+
+
+
+
+#III. Single-Source Shortest Path Problem:
+import sys
+
+
+class Graph:
+    def __init__(self, vertices):
+        self.V = vertices
+        self.graph = [[0 for _ in range(vertices)] for _ in range(vertices)]
+
+    def add_edge(self, u, v, w):
+        self.graph[u][v] = w
+        self.graph[v][u] = w
+
+    def find_min_distance(self, dist, spt_set):
+        min_distance = sys.maxsize
+        min_index = -1
+
+        for v in range(self.V):
+            if dist[v] < min_distance and not spt_set[v]:
+                min_distance = dist[v]
+                min_index = v
+
+        return min_index
+
+    def print_solution(self, dist):
+        print("Vertex\tDistance from Source")
+        for v in range(self.V):
+            print(f"{v}\t{dist[v]}")
+
+    def dijkstra_sssp(self, src):
+        dist = [sys.maxsize] * self.V
+        dist[src] = 0
+        spt_set = [False] * self.V
+
+        for _ in range(self.V):
+            u = self.find_min_distance(dist, spt_set)
+            spt_set[u] = True
+
+            for v in range(self.V):
+                if (
+                    not spt_set[v]
+                    and self.graph[u][v] != 0
+                    and dist[u] != sys.maxsize
+                    and dist[u] + self.graph[u][v] < dist[v]
+                ):
+                    dist[v] = dist[u] + self.graph[u][v]
+
+        self.print_solution(dist)
+
+
+num_vertices = int(input("Enter the number of vertices: "))
+graph = Graph(num_vertices)
+
+num_edges = int(input("Enter the number of edges: "))
+print("Enter the edges (u v w) and their weights:")
+for _ in range(num_edges):
+    u, v, w = map(int, input().split())
+    graph.add_edge(u, v, w)
+
+start_vertex = int(input("Enter the starting vertex: "))
+
+print("Single-Source Shortest Path:")
+graph.dijkstra_sssp(start_vertex)
+
+
+
+
+
+
+
+
+# 4.Job Scheduling Problem:
+def job_scheduling(job_list):
+    n = len(job_list)
+    job_list.sort(key=lambda x: x[1])  # Sort jobs by finish time
+
+    result = []
+    result.append(job_list[0])
+    prev_finish_time = job_list[0][1]
+
+    for i in range(1, n):
+        start_time, finish_time = job_list[i]
+        if start_time >= prev_finish_time:
+            result.append(job_list[i])
+            prev_finish_time = finish_time
+
+    return result
+
+
+# User Input
+num_jobs = int(input("Enter the number of jobs: "))
+job_list = []
+
+print("Enter the start and finish times of the jobs (start_time finish_time):")
+for _ in range(num_jobs):
+    start_time, finish_time = map(int, input().split())
+    job_list.append((start_time, finish_time))
+
+print("Scheduled Jobs:")
+scheduled_jobs = job_scheduling(job_list)
+for job in scheduled_jobs:
+    print(job)
+
+
+
+
+V. Prim's Minimal Spanning Tree Algorithm:
+
+
+
+class Graph:
+    def __init__(self, vertices):
+        self.V = vertices
+        self.graph = [[0 for _ in range(vertices)] for _ in range(vertices)]
+
+    def add_edge(self, u, v, w):
+        self.graph[u][v] = w
+        self.graph[v][u] = w
+
+    def find_min_key(self, key, mst_set):
+        min_key = float("inf")
+        min_index = -1
+
+        for v in range(self.V):
+            if key[v] < min_key and not mst_set[v]:
+                min_key = key[v]
+                min_index = v
+
+        return min_index
+
+    def print_mst(self, parent):
+        print("Edge\tWeight")
+        for i in range(1, self.V):
+            print(f"{parent[i]} - {i}\t{self.graph[i][parent[i]]}")
+
+    def prim_mst(self):
+        key = [float("inf")] * self.V
+        parent = [None] * self.V
+        key[0] = 0
+        mst_set = [False] * self.V
+
+        parent[0] = -1
+
+        for _ in range(self.V):
+            u = self.find_min_key(key, mst_set)
+            mst_set[u] = True
+
+            for v in range(self.V):
+                if (
+                    self.graph[u][v] != 0
+                    and not mst_set[v]
+                    and self.graph[u][v] < key[v]
+                ):
+                    key[v] = self.graph[u][v]
+                    parent[v] = u
+
+        self.print_mst(parent)
+
+
+# User Input
+num_vertices = int(input("Enter the number of vertices: "))
+graph = Graph(num_vertices)
+
+num_edges = int(input("Enter the number of edges: "))
+print("Enter the edges (u v w) and their weights:")
+for _ in range(num_edges):
+    u, v, w = map(int, input().split())
+    graph.add_edge(u, v, w)
+
+print("Minimum Spanning Tree:")
+graph.prim_mst()
+
+
+#VI. Kruskal's Minimal Spanning Tree Algorithm:
+
+
+
+
+class Graph:
+    def __init__(self, vertices):
+        self.V = vertices
+        self.graph = []
+
+    def add_edge(self, u, v, w):
+        self.graph.append((u, v, w))
+
+    def find(self, parent, i):
+        if parent[i] == i:
+            return i
+        return self.find(parent, parent[i])
+
+    def union(self, parent, rank, x, y):
+        xroot = self.find(parent, x)
+        yroot = self.find(parent, y)
+
+        if rank[xroot] < rank[yroot]:
+            parent[xroot] = yroot
+        elif rank[xroot] > rank[yroot]:
+            parent[yroot] = xroot
+        else:
+            parent[yroot] = xroot
+            rank[xroot] += 1
+
+    def kruskal_mst(self):
+        result = []
+        i = 0
+        e = 0
+        self.graph = sorted(self.graph, key=lambda item: item[2])
+        parent = []
+        rank = []
+
+        for node in range(self.V):
+            parent.append(node)
+            rank.append(0)
+
+        while e < self.V - 1:
+            u, v, w = self.graph[i]
+            i += 1
+            x = self.find(parent, u)
+            y = self.find(parent, v)
+
+            if x != y:
+                e += 1
+                result.append((u, v, w))
+                self.union(parent, rank, x, y)
+
+        print("Minimum Spanning Tree:")
+        for u, v, w in result:
+            print(f"{u} - {v}: {w}")
+
+
+# User Input
+num_vertices = int(input("Enter the number of vertices: "))
+graph = Graph(num_vertices)
+
+num_edges = int(input("Enter the number of edges: "))
+print("Enter the edges (u v w) and their weights:")
+for _ in range(num_edges):
+    u, v, w = map(int, input().split())
+    graph.add_edge(u, v, w)
+
+graph.kruskal_mst()
+
+
+
+
+VII. Dijkstra's Minimal Spanning Tree Algorithm:
+
+
+class Graph:
+    def __init__(self, vertices):
+        self.V = vertices
+        self.graph = [[0 for _ in range(vertices)] for _ in range(vertices)]
+
+    def add_edge(self, u, v, w):
+        self.graph[u][v] = w
+        self.graph[v][u] = w
+
+    def find_min_distance(self, dist, spt_set):
+        min_distance = float("inf")
+        min_index = -1
+
+        for v in range(self.V):
+            if dist[v] < min_distance and not spt_set[v]:
+                min_distance = dist[v]
+                min_index = v
+
+        return min_index
+
+    def print_solution(self, dist):
+        print("Vertex\tDistance from Source")
+        for v in range(self.V):
+            print(f"{v}\t{dist[v]}")
+
+    def dijkstra_mst(self, src):
+        dist = [float("inf")] * self.V
+        dist[src] = 0
+        spt_set = [False] * self.V
+
+        for _ in range(self.V):
+            u = self.find_min_distance(dist, spt_set)
+            spt_set[u] = True
+
+            for v in range(self.V):
+                if (
+                    not spt_set[v]
+                    and self.graph[u][v] != 0
+                    and dist[u] != float("inf")
+                    and dist[u] + self.graph[u][v] < dist[v]
+                ):
+                    dist[v] = dist[u] + self.graph[u][v]
+
+        self.print_solution(dist)
+
+
+# User Input
+num_vertices = int(input("Enter the number of vertices: "))
+graph = Graph(num_vertices)
+
+num_edges = int(input("Enter the number of edges: "))
+print("Enter the edges (u v w) and their weights:")
+for _ in range(num_edges):
+    u, v, w = map(int, input().split())
+    graph.add_edge(u, v, w)
+
+start_vertex = int(input("Enter the starting vertex: "))
+
+print("Minimal Spanning Tree:")
+graph.dijkstra_mst(start_vertex)
+
+
+
+
+
+
+
+
+
+
+
