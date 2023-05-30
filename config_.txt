@@ -191,78 +191,67 @@ for job in scheduled_jobs:
 
 
 
-V. Prim's Minimal Spanning Tree Algorithm:
-
-
+# Prim's Minimal Spanning Tree Algorithm:
 
 class Graph:
-    def __init__(self, vertices):
-        self.V = vertices
-        self.graph = [[0 for _ in range(vertices)] for _ in range(vertices)]
+    def __init__(self, num_vertices):
+        self.num_vertices = num_vertices
+        self.graph = [[0 for _ in range(num_vertices)] for _ in range(num_vertices)]
 
     def add_edge(self, u, v, w):
-        self.graph[u][v] = w
-        self.graph[v][u] = w
-
-    def find_min_key(self, key, mst_set):
-        min_key = float("inf")
-        min_index = -1
-
-        for v in range(self.V):
-            if key[v] < min_key and not mst_set[v]:
-                min_key = key[v]
-                min_index = v
-
-        return min_index
-
-    def print_mst(self, parent):
-        print("Edge\tWeight")
-        for i in range(1, self.V):
-            print(f"{parent[i]} - {i}\t{self.graph[i][parent[i]]}")
+        if 0 <= u < self.num_vertices and 0 <= v < self.num_vertices:
+            self.graph[u][v] = w
+            self.graph[v][u] = w
+        else:
+            print("Invalid vertices:", u, v)
 
     def prim_mst(self):
-        key = [float("inf")] * self.V
-        parent = [None] * self.V
-        key[0] = 0
-        mst_set = [False] * self.V
+        # Create a list to track the selected vertices
+        selected = [False] * self.num_vertices
 
-        parent[0] = -1
+        # Set the first vertex as selected
+        selected[0] = True
 
-        for _ in range(self.V):
-            u = self.find_min_key(key, mst_set)
-            mst_set[u] = True
+        # Initialize the total weight of the MST
+        total_weight = 0
 
-            for v in range(self.V):
-                if (
-                    self.graph[u][v] != 0
-                    and not mst_set[v]
-                    and self.graph[u][v] < key[v]
-                ):
-                    key[v] = self.graph[u][v]
-                    parent[v] = u
+        # Print the edges of the MST
+        print("Edge \tWeight")
 
-        self.print_mst(parent)
+        # Iterate through all the vertices
+        for _ in range(self.num_vertices - 1):
+            min_weight = float('inf')
+            u, v = None, None
 
+            # Find the minimum weight edge from the selected vertices
+            for i in range(self.num_vertices):
+                if selected[i]:
+                    for j in range(self.num_vertices):
+                        if not selected[j] and self.graph[i][j] != 0 and self.graph[i][j] < min_weight:
+                            min_weight = self.graph[i][j]
+                            u, v = i, j
 
-# User Input
+            # Add the minimum weight edge to the MST
+            print(f"{u} - {v}\t{min_weight}")
+            total_weight += min_weight
+            selected[v] = True
+        print("Total Weight:", total_weight)
 num_vertices = int(input("Enter the number of vertices: "))
+num_edges = int(input("Enter the number of edges: "))
+
 graph = Graph(num_vertices)
 
-num_edges = int(input("Enter the number of edges: "))
-print("Enter the edges (u v w) and their weights:")
+# Get the edges from the user and add them to the graph
+print("Enter the edges (u v w) in the graph:")
 for _ in range(num_edges):
     u, v, w = map(int, input().split())
     graph.add_edge(u, v, w)
 
+# Perform the Minimum Spanning Tree algorithm
 print("Minimum Spanning Tree:")
 graph.prim_mst()
 
-
 #VI. Kruskal's Minimal Spanning Tree Algorithm:
-
-
-
-
 class Graph:
     def __init__(self, vertices):
         self.V = vertices
