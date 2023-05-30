@@ -252,6 +252,10 @@ print("Minimum Spanning Tree:")
 graph.prim_mst()
 
 #VI. Kruskal's Minimal Spanning Tree Algorithm:
+
+
+
+
 class Graph:
     def __init__(self, vertices):
         self.V = vertices
@@ -320,7 +324,7 @@ graph.kruskal_mst()
 
 
 
-VII. Dijkstra's Minimal Spanning Tree Algorithm:
+#VII. Dijkstra's Minimal Spanning Tree Algorithm:
 
 
 class Graph:
