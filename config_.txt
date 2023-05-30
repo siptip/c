@@ -92,23 +92,20 @@ graph.kruskal_mst()
 
 
 #III. Single-Source Shortest Path Problem:
-import sys
-
-
 class Graph:
     def __init__(self, vertices):
-        self.V = vertices
-        self.graph = [[0 for _ in range(vertices)] for _ in range(vertices)]
+        self.V = vertices + 1  # Add 1 to accommodate vertex indices starting from 1
+        self.graph = [[0 for _ in range(self.V)] for _ in range(self.V)]
 
     def add_edge(self, u, v, w):
         self.graph[u][v] = w
         self.graph[v][u] = w
 
     def find_min_distance(self, dist, spt_set):
-        min_distance = sys.maxsize
+        min_distance = float('inf')
         min_index = -1
 
-        for v in range(self.V):
+        for v in range(1, self.V):  # Start from index 1
             if dist[v] < min_distance and not spt_set[v]:
                 min_distance = dist[v]
                 min_index = v
@@ -117,23 +114,23 @@ class Graph:
 
     def print_solution(self, dist):
         print("Vertex\tDistance from Source")
-        for v in range(self.V):
+        for v in range(1, self.V):  # Start from index 1
             print(f"{v}\t{dist[v]}")
 
     def dijkstra_sssp(self, src):
-        dist = [sys.maxsize] * self.V
+        dist = [float('inf')] * self.V
         dist[src] = 0
         spt_set = [False] * self.V
 
-        for _ in range(self.V):
+        for _ in range(1, self.V):  # Start from index 1
             u = self.find_min_distance(dist, spt_set)
             spt_set[u] = True
 
-            for v in range(self.V):
+            for v in range(1, self.V):  # Start from index 1
                 if (
                     not spt_set[v]
                     and self.graph[u][v] != 0
-                    and dist[u] != sys.maxsize
+                    and dist[u] != float('inf')
                     and dist[u] + self.graph[u][v] < dist[v]
                 ):
                     dist[v] = dist[u] + self.graph[u][v]
@@ -154,9 +151,6 @@ start_vertex = int(input("Enter the starting vertex: "))
 
 print("Single-Source Shortest Path:")
 graph.dijkstra_sssp(start_vertex)
-
-
-
 
 
 
