@@ -18,14 +18,21 @@ print(sorted_nums)
 
 
 #Minimum Spanning Tree:
-
 class Graph:
-    def __init__(self, vertices):
-        self.V = vertices
-        self.graph = []
+    def __init__(self, num_vertices):
+        self.num_vertices = num_vertices
+        self.adjacency_list = {}
+        self.edges = []
 
     def add_edge(self, u, v, w):
-        self.graph.append([u, v, w])
+        if u not in self.adjacency_list:
+            self.adjacency_list[u] = []
+        if v not in self.adjacency_list:
+            self.adjacency_list[v] = []
+
+        self.adjacency_list[u].append((v, w))
+        self.adjacency_list[v].append((u, w))
+        self.edges.append((u, v, w))
 
     def find(self, parent, i):
         if parent[i] == i:
@@ -45,36 +52,36 @@ class Graph:
             rank[xroot] += 1
 
     def kruskal_mst(self):
+        parent = [i for i in range(self.num_vertices + 1)]
+        rank = [0] * (self.num_vertices + 1)
         result = []
-        i = 0
         e = 0
-        self.graph = sorted(self.graph, key=lambda item: item[2])
-        parent = []
-        rank = []
 
-        for node in range(self.V):
-            parent.append(node)
-            rank.append(0)
+        self.edges.sort(key=lambda x: x[2])
 
-        while e < self.V - 1:
-            u, v, w = self.graph[i]
-            i += 1
+        for u, v, w in self.edges:
             x = self.find(parent, u)
             y = self.find(parent, v)
 
             if x != y:
                 e += 1
-                result.append([u, v, w])
+                result.append((u, v, w))
                 self.union(parent, rank, x, y)
+
+            if e == self.num_vertices - 1:
+                break
 
         print("Minimum Spanning Tree:")
         for u, v, w in result:
-            print(f"{u} - {v}: {w}")
+            print(f"{u} - {v}   {w}")
+
+# User Input
 num_vertices = int(input("Enter the number of vertices: "))
+num_edges = int(input("Enter the number of edges: "))
+
 graph = Graph(num_vertices)
 
-num_edges = int(input("Enter the number of edges: "))
-print("Enter the edges (u v w) and their weights:")
+print("Enter the edges (u v w) in the graph:")
 for _ in range(num_edges):
     u, v, w = map(int, input().split())
     graph.add_edge(u, v, w)
